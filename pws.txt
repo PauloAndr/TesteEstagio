@@ -1,0 +1,2 @@
+.\AlunoOnlineVenv\Scripts\Activate.ps1
+cd .\AlunoOnline\
