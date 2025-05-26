@@ -8,7 +8,7 @@ import json
 # Create your views here.
 
 def get_turmas(request):
-    turmas = Turma.objects.all()
+    turmas = Turma.objects.filter(ativo=True)
     turmas_data = [
         {
             'id': turma.id,
@@ -22,7 +22,7 @@ def get_turmas(request):
     return JsonResponse({'turmas': turmas_data})
 
 def get_professores(request):
-    professores = Professor.objects.all()
+    professores = Professor.objects.filter(ativo=True)
     professores_data = [
         {
             'id': prof.id,

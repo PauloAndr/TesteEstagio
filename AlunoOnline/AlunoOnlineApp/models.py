@@ -14,7 +14,7 @@ class Professor(models.Model):
 class Turma(models.Model):
 
     turno = models.CharField(max_length=20, unique=False, blank=False, editable=True, null=True)
-    nome_turma = models.CharField(max_length=100, unique=True)
+    nome_turma = models.CharField(max_length=100)
     professor_principal = models.OneToOneField(
         Professor,
         on_delete=models.SET_NULL,
@@ -22,7 +22,7 @@ class Turma(models.Model):
         blank=True,
         related_name='turma_lecionada'
     )
-    turma = models.CharField(max_length=100, unique=False, blank=False, editable=True, null=True)
+    turma = models.CharField(max_length=100, blank=False, editable=True, null=True)
     representante = models.OneToOneField(
         'Aluno',
         on_delete=models.SET_NULL,
