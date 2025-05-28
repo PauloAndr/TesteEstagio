@@ -9,3 +9,6 @@ select * from "AlunoOnlineApp_turma" ;
 select * from "AlunoOnlineApp_professor" ;
 
 python manage.py test AlunoOnlineApp
+
+from AlunoOnlineApp.exportar_excel import exportar_turma_para_excel
+exportar_turma_para_excel(13, r"C:\Users\paulo\Desktop")

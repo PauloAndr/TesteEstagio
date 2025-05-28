@@ -15,9 +15,9 @@ class PopulaModelosTestCase(TestCase):
         ]
         # Cria turmas
         self.turmas = [
-            Turma.objects.create(turno="Manhã", nome_turma="Primeira Série", professor_principal=self.professores[0], turma="Turma 1A", ativo=True),
-            Turma.objects.create(turno="Tarde", nome_turma="Primeira Série", professor_principal=self.professores[1], turma="Turma 1B", ativo=True),
-            Turma.objects.create(turno="Noite", nome_turma="Primeira Série", professor_principal=self.professores[2], turma="Turma 1C", ativo=True),
+            Turma.objects.create(turno="Manhã", serie="Primeira Série", professor_principal=self.professores[0], turma="Turma 1A", ativo=True),
+            Turma.objects.create(turno="Tarde", serie="Primeira Série", professor_principal=self.professores[1], turma="Turma 1B", ativo=True),
+            Turma.objects.create(turno="Noite", serie="Primeira Série", professor_principal=self.professores[2], turma="Turma 1C", ativo=True),
         ]
         # Cria alunos e associa às turmas
         self.alunos = [
@@ -36,18 +36,20 @@ class PopulaModelosTestCase(TestCase):
         self.turmas[2].representante = self.alunos[4] 
         self.turmas[2].save()
 
+    # Testes para verificar se os modelos foram populados corretamente
     def test_professores_criados(self):
         self.assertEqual(Professor.objects.count(), 3)
         self.assertEqual(self.professores[1].nome_professor, "Joana Oliveira")
+        self.assertEqual(self.professores[1].matricula_professor, "P54321")
 
     def test_turmas_criadas(self):
         self.assertEqual(Turma.objects.count(), 3)
-        self.assertEqual(self.turmas[0].nome_turma, "Primeira Série")
+        self.assertEqual(self.turmas[0].serie, "Primeira Série")
         self.assertEqual(self.turmas[0].turma, "Turma 1A")
         self.assertEqual(self.turmas[0].professor_principal, self.professores[0])
         self.assertEqual(self.turmas[0].representante, self.alunos[0])
 
-    def test_alunos_criados(self):
-        self.assertEqual(Aluno.objects.count(), 6)
-        self.assertEqual(self.alunos[0].nome_aluno, "Mario Silva")
+    def test_alunos_criados(self): 
+        self.assertEqual(Aluno.objects.count(), 6) 
+        self.assertEqual(self.alunos[0].nome_aluno, "Mario Silva") 
         self.assertEqual(self.alunos[0].turma, self.turmas[0])

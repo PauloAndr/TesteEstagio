@@ -12,7 +12,7 @@ def get_turmas(request):
     turmas_data = [
         {
             'id': turma.id,
-            'nome_turma': turma.nome_turma,
+            'serie': turma.serie,  # Alterado de nome_turma para serie
             'turno': turma.turno,
             'professor_principal': turma.professor_principal.nome_professor if turma.professor_principal else None,
             'turma': turma.turma
@@ -40,7 +40,8 @@ def get_alunos(request):
             'id': aluno.id,
             'nome_aluno': aluno.nome_aluno,
             'matricula_aluno': aluno.matricula_aluno,
-            'turma': aluno.turma.nome_turma if aluno.turma else None
+            'serie': aluno.turma.serie if aluno.turma else None,  # Mostra a série do aluno
+            'turma': aluno.turma.turma if aluno.turma else None
         }
         for aluno in alunos
     ]
@@ -86,12 +87,12 @@ def post_aluno(request):
 def post_turma(request):
     try:
         data = json.loads(request.body)
-        nome = data.get('nome_turma')
+        serie = data.get('serie')  # Alterado de nome_turma para serie
         turno = data.get('turno')
         professor_id = data.get('professor_principal_id')
         turma_field = data.get('turma')
-        if not nome or not turno or not turma_field:
-            return JsonResponse({'error': 'Nome da turma, turno e campo turma são obrigatórios.'}, status=400)
+        if not serie or not turno or not turma_field:
+            return JsonResponse({'error': 'Série, turno e campo turma são obrigatórios.'}, status=400)
         professor = None
         if professor_id:
             try:
@@ -99,14 +100,14 @@ def post_turma(request):
             except Professor.DoesNotExist:
                 return JsonResponse({'error': 'Professor não encontrado.'}, status=404)
         turma_obj = Turma.objects.create(
-            nome_turma=nome,
+            serie=serie,
             turno=turno,
             professor_principal=professor,
             turma=turma_field
         )
         return JsonResponse({
             'id': turma_obj.id,
-            'nome_turma': turma_obj.nome_turma,
+            'serie': turma_obj.serie,
             'turno': turma_obj.turno,
             'professor_principal': turma_obj.professor_principal.nome_professor if turma_obj.professor_principal else None,
             'turma': turma_obj.turma
