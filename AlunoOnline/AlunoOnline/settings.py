@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'AlunoOnlineApp.apps.AlunoonlineappConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

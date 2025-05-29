@@ -15,7 +15,7 @@ class Professor(models.Model):
 # --- Modelo Turma ---
 class Turma(models.Model):
     turno = models.CharField(max_length=20, unique=False, blank=False, editable=True, null=True)
-    serie = models.CharField(max_length=100)  # Agora representa a série, ex: 'Segundo Ano', 'Terceiro Ano'
+    serie = models.CharField(max_length=100)
     professor_principal = models.OneToOneField(
         Professor,
         on_delete=models.SET_NULL,
