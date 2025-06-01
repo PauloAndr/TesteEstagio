@@ -6,7 +6,7 @@ class ProfessorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Professor
-        fields = ['id', 'nome_professor', 'matricula_professor']
+        fields = ['id', 'nome_professor', 'matricula_professor', 'turma_lecionado']
 
 class AlunoSerializer(serializers.ModelSerializer):
     turma = serializers.StringRelatedField() # Exibe o nome da turma como string

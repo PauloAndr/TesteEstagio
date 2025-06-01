@@ -11,6 +11,8 @@ from .serializers import TurmaSerializer, ProfessorSerializer, AlunoSerializer
 
 # Create your views here.
 
+
+        #GET VIEWS
 class TurmaListAPIView(APIView):
     def get(self, request):
         turmas = Turma.objects.filter(ativo=True)
@@ -29,6 +31,8 @@ class AlunoListAPIView(APIView):
         serializer = AlunoSerializer(alunos, many=True)
         return Response({'alunos': serializer.data}, status=status.HTTP_200_OK)
 
+
+            #CREATE VIEWS   
 class ProfessorCreateAPIView(APIView):
     def post(self, request):
         nome = request.data.get('nome_professor')
@@ -83,6 +87,8 @@ class TurmaCreateAPIView(APIView):
         serializer = TurmaSerializer(turma_obj)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+            #DELETE VIEWS
 class AlunoDeleteAPIView(APIView):
     def delete(self, request, aluno_id):
         try:
@@ -131,6 +137,8 @@ class TurmaDeleteAPIView(APIView):
         except Turma.DoesNotExist:
             return Response({'error': 'Turma não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
 
+
+            #UPDATE VIEWS
 class ProfessorUpdateAPIView(APIView):
     def put(self, request, professor_id):
         try:
@@ -172,4 +180,33 @@ class AlunoUpdateAPIView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+            #Detail Views
+class ProfessorDetailAPIView(APIView):
+    def get(self, request, professor_id):
+        try:
+            professor = Professor.objects.get(pk=professor_id)
+        except Professor.DoesNotExist:
+            return Response({'error': 'Professor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProfessorSerializer(professor)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class TurmaDetailAPIView(APIView):
+    def get(self, request, turma_id):
+        try:
+            turma = Turma.objects.get(pk=turma_id)
+        except Turma.DoesNotExist:
+            return Response({'error': 'Turma não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = TurmaSerializer(turma)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AlunoDetailAPIView(APIView):
+    def get(self, request, aluno_id):
+        try:
+            aluno = Aluno.objects.get(pk=aluno_id)
+        except Aluno.DoesNotExist:
+            return Response({'error': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = AlunoSerializer(aluno)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
