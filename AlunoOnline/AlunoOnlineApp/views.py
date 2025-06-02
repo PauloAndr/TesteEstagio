@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import TurmaSerializer, ProfessorSerializer, AlunoSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Create your views here.
 
@@ -37,11 +38,16 @@ class ProfessorCreateAPIView(APIView):
     def post(self, request):
         nome = request.data.get('nome_professor')
         matricula = request.data.get('matricula_professor')
+        foto = request.FILES.get('foto_professor')
         if not nome or not matricula:
             return Response({'error': 'Nome e matrícula são obrigatórios.'}, status=status.HTTP_400_BAD_REQUEST)
         if Professor.objects.filter(matricula_professor=matricula).exists():
             return Response({'error': 'Matrícula já cadastrada.'}, status=status.HTTP_400_BAD_REQUEST)
-        professor = Professor.objects.create(nome_professor=nome, matricula_professor=matricula)
+        professor = Professor.objects.create(
+            nome_professor=nome,
+            matricula_professor=matricula,
+            foto_professor=foto
+        )
         serializer = ProfessorSerializer(professor)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -50,6 +56,7 @@ class AlunoCreateAPIView(APIView):
         nome = request.data.get('nome_aluno')
         matricula = request.data.get('matricula_aluno')
         turma_id = request.data.get('turma_id')
+        foto = request.FILES.get('foto_aluno')
         if not nome or not matricula:
             return Response({'error': 'Nome e matrícula são obrigatórios.'}, status=status.HTTP_400_BAD_REQUEST)
         if Aluno.objects.filter(matricula_aluno=matricula).exists():
@@ -60,7 +67,12 @@ class AlunoCreateAPIView(APIView):
                 turma = Turma.objects.get(id=turma_id)
             except Turma.DoesNotExist:
                 return Response({'error': 'Turma não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
-        aluno = Aluno.objects.create(nome_aluno=nome, matricula_aluno=matricula, turma=turma)
+        aluno = Aluno.objects.create(
+            nome_aluno=nome,
+            matricula_aluno=matricula,
+            turma=turma,
+            foto_aluno=foto
+        )
         serializer = AlunoSerializer(aluno)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -153,6 +165,17 @@ class ProfessorUpdateAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self, request, professor_id):
+        try:
+            professor = Professor.objects.get(pk=professor_id)
+        except Professor.DoesNotExist:
+            return Response({'error': 'Professor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProfessorSerializer(professor, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class TurmaUpdateAPIView(APIView):
     def put(self, request, turma_id):
         try:
@@ -173,14 +196,13 @@ class AlunoUpdateAPIView(APIView):
             aluno = Aluno.objects.get(pk=aluno_id)
         except Aluno.DoesNotExist:
             return Response({'error': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-        original_data = AlunoSerializer(aluno).data
-        updated_data = {**original_data, **request.data}
-        serializer = AlunoSerializer(aluno, data=updated_data)
+        
+        serializer = AlunoSerializer(aluno, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
             #Detail Views
 class ProfessorDetailAPIView(APIView):
@@ -207,6 +229,55 @@ class AlunoDetailAPIView(APIView):
             aluno = Aluno.objects.get(pk=aluno_id)
         except Aluno.DoesNotExist:
             return Response({'error': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = AlunoSerializer(aluno)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ProfessorFotoUpdateAPIView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    def patch(self, request, professor_id):
+        try:
+            professor = Professor.objects.get(pk=professor_id)
+        except Professor.DoesNotExist:
+            return Response({'error': 'Professor não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        foto = request.FILES.get('foto_professor')
+        if not foto:
+            return Response({'error': 'Nenhuma foto enviada.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Remover arquivo antigo do disco se existir
+        if professor.foto_professor and professor.foto_professor.name:
+            import os
+            from django.conf import settings
+            old_path = professor.foto_professor.path
+            if os.path.isfile(old_path):
+                try:
+                    os.remove(old_path)
+                except Exception:
+                    pass  # Não impede o upload novo
+        professor.foto_professor = foto
+        professor.save()
+        serializer = ProfessorSerializer(professor)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AlunoFotoUpdateAPIView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    def patch(self, request, aluno_id):
+        try:
+            aluno = Aluno.objects.get(pk=aluno_id)
+        except Aluno.DoesNotExist:
+            return Response({'error': 'Aluno não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        foto = request.FILES.get('foto_aluno')
+        if not foto:
+            return Response({'error': 'Nenhuma foto enviada.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Remover arquivo antigo do disco se existir
+        if aluno.foto_aluno and aluno.foto_aluno.name:
+            import os
+            old_path = aluno.foto_aluno.path
+            if os.path.isfile(old_path):
+                try:
+                    os.remove(old_path)
+                except Exception:
+                    pass  # Não impede o upload novo
+        aluno.foto_aluno = foto
+        aluno.save()
         serializer = AlunoSerializer(aluno)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

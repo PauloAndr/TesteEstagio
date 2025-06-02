@@ -4,10 +4,11 @@ from .models import Turma, Professor, Aluno
 class ProfessorSerializer(serializers.ModelSerializer):
     turma_lecionado = serializers.SerializerMethodField()
     serie_turma_lecionada = serializers.SerializerMethodField()
+    foto_professor = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Professor
-        fields = ['id', 'nome_professor', 'matricula_professor', 'turma_lecionado', 'serie_turma_lecionada']
+        fields = ['id', 'nome_professor', 'matricula_professor', 'foto_professor', 'turma_lecionado', 'serie_turma_lecionada']
 
     def get_turma_lecionado(self, obj):
         turma = Turma.objects.filter(professor_principal=obj).first()
@@ -23,10 +24,14 @@ class ProfessorSerializer(serializers.ModelSerializer):
 
 class AlunoSerializer(serializers.ModelSerializer):
     turma = serializers.PrimaryKeyRelatedField(read_only=True)  # Retorna o id da turma
+    turma_id = serializers.PrimaryKeyRelatedField(
+        queryset=Turma.objects.all(), source="turma", write_only=True, required=False, allow_null=True
+    )
+    foto_aluno = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Aluno
-        fields = ['id', 'nome_aluno', 'matricula_aluno', 'turma']
+        fields = ['id', 'nome_aluno', 'matricula_aluno', 'turma', 'turma_id', 'foto_aluno']
 
 class TurmaSerializer(serializers.ModelSerializer):
     professor_principal = ProfessorSerializer(read_only=True)

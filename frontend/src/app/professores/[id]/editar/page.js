@@ -10,6 +10,8 @@ export default function EditarProfessor() {
   const [matricula, setMatricula] = useState("");
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState(false);
+  const [foto, setFoto] = useState(null);
+  const [preview, setPreview] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,8 +20,19 @@ export default function EditarProfessor() {
       .then((data) => {
         setNome(data.nome_professor);
         setMatricula(data.matricula_professor);
+        if (data.foto_professor) {
+          setPreview(data.foto_professor.startsWith('http') ? data.foto_professor : `http://localhost:8000${data.foto_professor}`);
+        }
       });
   }, [id]);
+
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    setFoto(file);
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,20 +58,39 @@ export default function EditarProfessor() {
       setErro("Já existe um professor responsável para essa turma e série.");
       return;
     }
-    const body = {
-      nome_professor: nome,
-      matricula_professor: matricula
-    };
+    const formData = new FormData();
+    formData.append("nome_professor", nome);
+    formData.append("matricula_professor", matricula);
     const res = await fetch(`http://localhost:8000/api/professores/${id}/update/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      method: "PATCH",
+      body: formData,
     });
     if (res.ok) {
       setSucesso(true);
     } else {
       const data = await res.json();
       setErro(data.error || "Erro ao atualizar professor");
+    }
+  };
+
+  const handleFotoSubmit = async (e) => {
+    e.preventDefault();
+    setErro("");
+    if (!foto) {
+      setErro("Selecione uma foto para atualizar.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("foto_professor", foto);
+    const res = await fetch(`http://localhost:8000/api/professores/${id}/foto/`, {
+      method: "PATCH",
+      body: formData,
+    });
+    if (res.ok) {
+      setSucesso(true);
+    } else {
+      const data = await res.json();
+      setErro(data.error || "Erro ao atualizar foto do professor");
     }
   };
 
@@ -101,6 +133,27 @@ export default function EditarProfessor() {
             <CustomButton type="button" className="w-32 bg-gray-500 hover:bg-gray-600 cursor-pointer" onClick={() => router.back()}>
               Voltar
             </CustomButton>
+          </div>
+        </form>
+        <form onSubmit={handleFotoSubmit} className="space-y-4 w-full mt-2" encType="multipart/form-data">
+          <div className="px-4 py-2">
+            <label className="w-full flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded cursor-pointer hover:bg-blue-200 transition border border-blue-300">
+              <span>Alterar Foto de Perfil</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFotoChange}
+                className="hidden"
+              />
+            </label>
+            {preview && (
+              <div className="flex justify-center w-full">
+                <img src={preview} alt="Preview" className="mt-2 max-h-32 rounded shadow" />
+              </div>
+            )}
+          </div>
+          <div className="flex gap-4 justify-center w-full mt-2">
+            <CustomButton type="submit" className="w-32 cursor-pointer">Salvar Foto</CustomButton>
           </div>
         </form>
       </div>

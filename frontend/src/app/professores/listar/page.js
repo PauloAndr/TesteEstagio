@@ -69,7 +69,20 @@ export default function ListarProfessoresPage() {
                 .sort((a, b) => a.nome_professor.localeCompare(b.nome_professor))
                 .map((prof) => (
                   <tr key={prof.id}>
-                    <td className="px-4 py-2 whitespace-nowrap text-black">{prof.nome_professor}</td>
+                    <td className="px-4 py-2 whitespace-nowrap text-black flex items-center gap-2">
+                      {prof.foto_professor ? (
+                        <img
+                          src={prof.foto_professor.startsWith('http') ? prof.foto_professor : `http://localhost:8000${prof.foto_professor}`}
+                          alt="Foto"
+                          className="w-8 h-8 rounded-full object-cover border border-gray-300"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs border border-gray-300">
+                          <span>?</span>
+                        </div>
+                      )}
+                      {prof.nome_professor}
+                    </td>
                     <td className="px-4 py-2 whitespace-nowrap text-black">{prof.matricula_professor}</td>
                     <td className="px-4 py-2 whitespace-nowrap text-black">{prof.turma_lecionado ? prof.turma_lecionado : <span className="text-gray-400 italic">Sem turma</span>}</td>
                     <td className="px-4 py-2 whitespace-nowrap text-black">{prof.serie_turma_lecionada ? prof.serie_turma_lecionada : <span className="text-gray-400 italic">Sem série</span>}</td>

@@ -109,7 +109,19 @@ export default function ListarAlunosPage() {
                   const turmaInfo = getTurmaInfo(aluno.turma);
                   return (
                     <tr key={aluno.id}>
-                      <td className="px-4 py-2 whitespace-nowrap text-black">
+                      <td className="px-4 py-2 whitespace-nowrap text-black flex items-center gap-2">
+                        {aluno.foto_aluno ? (
+                          <img
+                            src={String(aluno.foto_aluno).startsWith('http') ? aluno.foto_aluno : `http://localhost:8000${aluno.foto_aluno}`}
+                            alt="Foto"
+                            className="w-8 h-8 rounded-full object-cover border border-gray-300"
+                            onError={e => { e.target.onerror = null; e.target.src = '/file.svg'; }}
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs border border-gray-300">
+                            <span>?</span>
+                          </div>
+                        )}
                         {aluno.nome_aluno}
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-black">
