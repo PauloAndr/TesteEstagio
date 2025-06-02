@@ -5,6 +5,7 @@ class Professor(models.Model):
     nome_professor = models.CharField(max_length=100)
     matricula_professor = models.CharField(max_length=10, unique=True, blank=False, editable=True, null=True)
     ativo = models.BooleanField(default=True)
+    foto_professor = models.ImageField(upload_to='fotos_professores/', blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -15,7 +16,7 @@ class Professor(models.Model):
 # --- Modelo Turma ---
 class Turma(models.Model):
     turno = models.CharField(max_length=20, unique=False, blank=False, editable=True, null=True)
-    serie = models.CharField(max_length=100)  # Agora representa a série, ex: 'Segundo Ano', 'Terceiro Ano'
+    serie = models.CharField(max_length=100)
     professor_principal = models.OneToOneField(
         Professor,
         on_delete=models.SET_NULL,
@@ -44,6 +45,7 @@ class Aluno(models.Model):
     turma = models.ForeignKey(Turma, on_delete=models.SET_NULL, null=True, blank=True, related_name='alunos')
     matricula_aluno = models.CharField(max_length=10, unique=True, blank=False, editable=True, null=True)
     ativo = models.BooleanField(default=True)
+    foto_aluno = models.ImageField(upload_to='fotos_aluno/', blank=True, null=True) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

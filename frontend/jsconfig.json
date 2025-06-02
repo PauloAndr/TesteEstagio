@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "checkJs": false,          // Ignora verificação de tipos em arquivos JS
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules"]  // Evita buscar definições de tipos no node_modules
+}

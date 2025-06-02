@@ -53,3 +53,4 @@ class PopulaModelosTestCase(TestCase):
         self.assertEqual(Aluno.objects.count(), 6) 
         self.assertEqual(self.alunos[0].nome_aluno, "Mario Silva") 
         self.assertEqual(self.alunos[0].turma, self.turmas[0])
+    
