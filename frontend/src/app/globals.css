@@ -1,8 +1,12 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #e0f2fe; /* azul claro Tailwind: sky-100 */
+  --foreground: #94ccec;
 }
 
 @theme inline {
@@ -14,7 +18,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #94ccec;
     --foreground: #ededed;
   }
 }
@@ -22,5 +26,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Arvo', ui-sans-serif, system-ui, Arial, Helvetica, sans-serif;
 }

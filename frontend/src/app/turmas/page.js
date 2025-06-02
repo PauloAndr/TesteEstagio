@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CustomButton from "@/components/CustomButton";
 
 export default function TurmasPage() {
   const [turmas, setTurmas] = useState([]);
@@ -17,26 +18,25 @@ export default function TurmasPage() {
   const handleListar = () => setShowList((prev) => !prev);
 
   return (
-    <div>
-      <h1>Turmas</h1>
-      <ul style={{ marginTop: 12, listStyle: "none", padding: 0 }}>
-        <li>
-          <Link href="/turmas/criar">Criar Turma</Link>
-        </li>
-        <li>
-          <Link href="/turmas/listar">
-            <button>Listar Turmas</button>
+    <div className="flex flex-col items-center justify-center gap-6 p-4">
+        <h1 className="text-2xl font-bold mb-4 drop-shadow-[0_1px_0_rgba(0,0,0,0.8)]" >Turmas</h1>
+      <div className="border-2 border-blue-400 rounded-2xl bg-white/80 shadow-md p-6 w-full max-w-md flex flex-col items-center gap-4">
+        <CustomButton>
+          <Link
+            href="/turmas/criar"
+            className="block w-full h-full flex items-center justify-center"
+          >
+            Cadastrar Turma
           </Link>
-        </li>
-      </ul>
-      <div style={{ marginTop: 16 }}>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          style={{ marginRight: 8 }}
-        >
-          Voltar
-        </button>
+        </CustomButton>
+        <CustomButton>
+          <Link
+            href="/turmas/listar"
+            className="block w-full h-full flex items-center justify-center"
+          >
+            Listar Turmas
+          </Link>
+        </CustomButton>
       </div>
     </div>
   );

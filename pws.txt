@@ -1,8 +1,11 @@
 
-        RODAR PROJETO
+        RODAR PROJETO BACK
 .\AlunoOnlineVenv\Scripts\Activate.ps1
 cd .\AlunoOnline\
 python manage.py runserver
+        RODAR FRONT
+cd.\frontend
+npm run dev
 
         ATUALIZAR MODELS
 python manage.py makemigrations
